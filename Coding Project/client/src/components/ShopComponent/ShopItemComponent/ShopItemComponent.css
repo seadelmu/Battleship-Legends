@@ -1,0 +1,26 @@
+.shop-item{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: gray;
+    margin: 1rem;
+    padding: 2rem;
+}
+
+.shop-item-details{
+    text-align: center;
+}
+
+.shop-item-button{
+    cursor: pointer;
+    background-color: limegreen;
+    border-radius: 5px;
+    border-color: transparent;
+    padding: 0.5rem 0.5rem;
+}
+
+.shop-item-image{
+    font-size: 0;
+}

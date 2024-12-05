@@ -1,0 +1,13 @@
+.return-lobby-btn{
+    background-color: red;
+    border-radius: 5px;
+    border-color: transparent;
+    padding: 0.5rem 1rem;
+    align-self: center;
+}
+
+#tutorial-container{
+    display: flex;
+    flex-direction: column;
+    margin: 0 2rem;
+}
