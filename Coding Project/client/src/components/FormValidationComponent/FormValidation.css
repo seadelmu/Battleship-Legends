@@ -1,0 +1,27 @@
+.form-container{
+    height: fit-content;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 0.7rem;
+}
+.form-input {
+    width: 100%;
+    padding: 0.5rem;
+    color: #000000;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    border: transparent;
+    text-align: center;
+}
+
+.invalid-input{
+    color: red;
+    font-size: 12px;
+    margin:0;
+}
+
+.no-visibility{
+    visibility: hidden;
+}

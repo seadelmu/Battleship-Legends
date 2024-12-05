@@ -1,0 +1,128 @@
+.lobby-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    background-color: #2d3748;
+    padding: 1rem;
+    gap: 5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+}
+
+
+.lobby-header{
+    display: flex;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #f7fafc;
+    text-align: left;
+    margin-bottom: 1rem;
+}
+.col-one{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.playerlist-holder{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(247, 250, 252, 0.41);
+    border-radius: 0.25rem;
+    padding: 1rem;
+    margin: 1rem;
+    gap: 10px;
+}
+
+.ready-button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    width: 100%;
+    background-color: #4bd84b;
+    border: transparent;
+    border-radius: 0.25rem;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.leave-lobby-button{
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    width: 100%;
+    background-color: rgba(216, 75, 75, 0.6);
+    border: transparent;
+    border-radius: 0.25rem;
+    color: #ffffff;
+    font-weight: bold;
+
+}
+
+
+.player-item {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(to bottom, #9da8a8, rgba(188, 107, 107, 0)); /* Gradient from dark to light */
+    border-radius: 0.25rem;
+    text-align: center;
+    width: 188px;
+    height: 3rem;
+    padding: 0 10px 0 10px;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 2px 20px rgb(0, 0, 0, .25); /* Subtle drop shadow */
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: rgba(255, 255, 255, 0.63);
+    border-radius: 50%;
+    width: 1rem;
+    height: 1rem;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+
+/* PlayPage.css */
+.player-item {
+    transition: background 0.5s ease;
+}
+
+.ready-gradient {
+    background: linear-gradient(180deg, rgba(0, 255, 0, 0.38) 0%, rgba(0, 0, 0, 0.11) 100%);
+}
+
+.not-ready-gradient {
+    background: linear-gradient(180deg, rgba(255, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.07) 100%);
+}
+
+.unready-button {
+    background-color: #ff4b4b; /* Red color for unready state */
+}
+
+.fade-out {
+    opacity: 0;
+    transition: opacity 1s ease-out;
+}
+
+.hidden {
+    display: none;
+}

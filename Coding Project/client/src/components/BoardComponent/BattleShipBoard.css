@@ -1,0 +1,229 @@
+.board{
+    padding: .5rem;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    gap: 0.5rem;
+    width: 30rem;
+    height: 30rem;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 10px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+}
+
+.cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #2a566e ;
+    border-radius: 5px;
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+    transition: background .25s ease-in-out;
+}
+
+.cell:hover {
+    background: rgba(53, 145, 200, 0.55);
+    transform: scale(1.05);
+    cursor: pointer;
+    transition: ease-in-out;
+}
+
+.left-number-coord{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: #ffffff;
+}
+
+.top-letter-coord{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: #ffffff;
+}
+
+.numbers{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(10, 1fr);
+    gap: 0.5rem;
+    width: 2rem;
+    height: 30rem;
+    margin-right: 10px;
+}
+
+.letters{
+    padding-left: 2.5rem;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 0.5rem;
+    width: 30rem;
+    height: 2rem;
+    margin-bottom: 10px;
+}
+
+.letter-coord{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.31);
+}
+
+.number-coord{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.21);
+}
+
+.cell.tentative-boat-cell {
+    background-color: rgba(35, 165, 20, 0.38); /* Example color for boat cells */
+}
+.cell.real-boat-cell{
+    background-color: rgba(255, 255, 255, 0.89); /* Example color for boat cells */
+}
+
+
+/*
+
+    const player1Color = '#9120fa';
+    const player2Color = '#FFD700';
+    const player3Color = '#1bed8e';
+    const player4Color = '#f19002';
+
+    */
+
+/*Player 1 misses, hits, and boat-cell-hits
+
+#9120fa
+*/
+.cell.miss-cell-1 {
+    background-color: #2b2b2b;
+    box-shadow: 0 0 5px #9120fa;
+    border: 2px solid #9120fa;
+}
+
+.cell.hit-cell-1 {
+    background-color: #d33b3b;
+    box-shadow: 0 0 5px #9120fa;
+    border: 2px solid #9120fa;
+}
+
+.cell.boat-cell-hit-1 {
+    background-color: #d33b3b;
+    box-shadow: 0 0 5px #9120fa;
+    border: 2px solid #9120fa;
+}
+
+.cell.point-cell-hit-1{
+    background: #5190b3;
+    box-shadow: 0 0 5px #9120fa;
+    border: 2px solid #9120fa;
+}
+
+/*Player 2 misses, hits, and boat-cell-hits
+
+#FFD700
+ */
+.cell.miss-cell-2 {
+    background-color: #2b2b2b;
+    box-shadow: 0 0 5px #FFD700;
+    border: 2px solid #FFD700;
+
+}
+
+.cell.hit-cell-2 {
+    background-color: #d33b3b;
+    box-shadow: 0 0 5px #FFD700;
+    border: 2px solid #FFD700;
+
+
+}
+
+.cell.boat-cell-hit-2 {
+    background-color: #d33b3b;
+    box-shadow: 0 0 5px #FFD700;
+    border: 2px solid #FFD700;
+}
+
+.cell.point-cell-hit-2{
+    background: #5190b3;
+    box-shadow: 0 0 5px #FFD700;
+    border: 2px solid #FFD700;
+
+}
+
+/*Player 3 misses, hits, and boat-cell-hits
+
+#1baeed
+ */
+
+.cell.miss-cell-3 {
+    background-color: #2b2b2b;
+    box-shadow: 0 0 5px #1baeed;
+    border: 2px solid #1baeed;
+}
+
+.cell.hit-cell-3 {
+    background-color: #d33b3b;
+    box-shadow: 0 0 5px #1baeed;
+    border: 2px solid #1baeed;
+}
+
+.cell.boat-cell-hit-3 {
+    background-color: #d33b3b;
+    box-shadow: 0 0 5px #1baeed;
+    border: 2px solid #1baeed;
+}
+
+.cell.point-cell-hit-3{
+    background: #5190b3;
+    box-shadow: 0 0 5px #1baeed;
+    border: 2px solid #1baeed;
+
+}
+
+/*Player 4 misses, hits, and boat-cell-hits
+
+#07ff00
+ */
+
+.cell.miss-cell-4 {
+    background-color: #2b2b2b;
+    box-shadow: 0 0 5px #07ff00;
+    border: 2px solid #07ff00;
+}
+
+.cell.hit-cell-4 {
+    background-color: #d33b3b;
+    box-shadow: 0 0 5px #07ff00;
+    border: 2px solid #07ff00;
+}
+
+.cell.boat-cell-hit-4 {
+    background-color: #d33b3b;
+    box-shadow: 0 0 5px #07ff00;
+    border: 2px solid #07ff00;
+}
+
+.cell.point-cell-hit-4{
+    background: #5190b3;
+    box-shadow: 0 0 5px #07ff00;
+    border: 2px solid #07ff00;
+}
+
+.cell.point-cell{
+    background: #5190b3;
+
+}
+
+
+
+

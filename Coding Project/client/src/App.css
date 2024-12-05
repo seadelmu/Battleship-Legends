@@ -1,0 +1,41 @@
+
+
+html{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    /*background: linear-gradient(to top, #1a202c, rgb(45, 55, 72));*/
+    background-size: cover;
+}
+
+body {
+    background: linear-gradient(180deg, #07304a 0%, #bfccd6 100%);
+    height: 100%;
+    margin: 0;
+    width: 100%;
+    background-size: 200% 200%;
+    animation: background 50s ease infinite;
+}
+
+@keyframes background {
+    0% {
+        background-position: 0 50%;
+    }
+
+    25% {
+        background-position: 50% 100%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    75% {
+        background-position: 50% 0;
+    }
+
+    100% {
+        background-position: 0 50%;
+    }
+}

@@ -1,0 +1,43 @@
+
+
+.shop-container {
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(54, 52, 52, 0.8); /* Semi-transparent background */
+    backdrop-filter: blur(10px); /* Blur effect */
+    width: 60%;
+    height: 60%;
+    border-radius: 10px;
+}
+
+.shop-top-bar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    margin-top: 0.2rem;
+}
+
+.points-container{
+    background-color: gray;
+    padding: 0.2rem 0.5rem;
+    border-radius: 20px;
+    height: fit-content;
+    width: fit-content;
+}
+
+.shop-items-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.shop-close-button{
+    color: red;
+    font-size: 1.7rem;
+    cursor: pointer;
+    background-color: transparent;
+    border-color: transparent;
+}
