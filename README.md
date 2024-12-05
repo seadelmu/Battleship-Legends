@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="\Coding Project\client\public\bote.png" alt="Boat Image" width="200"/>
+  <img src="\Coding Project\client\public\bote.png" alt="Battleship Legends Logo" width="200"/>
 </p>
 
 # BattleshipLegends
@@ -11,11 +11,19 @@ Multiplayer Battleship Game
 
 BattleshipLegends is an exciting multiplayer battleship game built using modern web technologies. Challenge your friends or players around the world in this classic game of strategy and skill.
 
-## Features
+## Preview
+## Preview
 
-- **Multiplayer Mode**: Play against friends or random opponents online.
-- **Real-time Communication**: Chat with your opponent in real-time.
-- **Turn System**: Take turns placing your ships and attacking your opponent.
+<p align="center">
+  <img src="\Coding Project\Assets\preview-screenshots\LobbyScreen.png" alt="Lobby Screen" width="500" style="display:inline-block; margin-right: 10px;"/>
+  <img src="\Coding Project\Assets\preview-screenshots\GameplayScreen.png" alt="Gameplay Screen" width="500" style="display:inline-block;"/>
+</p>
+
+
+## Features
+- **Multiplayer Mode**: Play against friends online.
+- **Real-time Communication**: Chat with your friends in real-time in the lobby.
+- **Turn System**: Take turns attacking your opponent.
 - **Reward/Point System**: Earn points for drowning ships and earn power ups.
 
 ## Technologies Used
@@ -66,6 +74,13 @@ Follow these instructions to get a copy of the project up and running on your lo
     ```
 
 3. Open your browser and navigate to `http://localhost:5173` to play the game.
+
+### Testing the Application
+```bash
+  cd '.\Coding Project\server\' 
+  mvn test
+```
+
 
 ## Contributing
 
