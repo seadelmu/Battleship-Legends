@@ -12,7 +12,6 @@ Multiplayer Battleship Game
 BattleshipLegends is an exciting multiplayer battleship game built using modern web technologies. Challenge your friends or players around the world in this classic game of strategy and skill.
 
 ## Preview
-## Preview
 
 <p align="center">
   <img src="\Coding Project\Assets\preview-screenshots\LobbyScreen.png" alt="Lobby Screen" width="500" style="display:inline-block; margin-right: 10px;"/>
