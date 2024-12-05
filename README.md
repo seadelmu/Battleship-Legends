@@ -32,7 +32,7 @@ Follow these instructions to get a copy of the project up and running on your lo
 ### Prerequisites
 
 - Node.js and npm installed
-- Java installed and running SDK 22
+- Java installed and running >= JDK 17
 
 ### Installation
 
