@@ -99,11 +99,6 @@ const EnterLobbyPage = () => {
         }
     };
 
-    useEffect(() => {
-        if (lobbyCode) {
-            console.log('New LobbyCode:', lobbyCode);
-        }
-    }, [lobbyCode]);
 
     const handleCreateLobby = () => {
         storeLobbyCodeCookie(lobbyCode);

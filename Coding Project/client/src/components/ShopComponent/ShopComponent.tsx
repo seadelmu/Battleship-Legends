@@ -17,7 +17,7 @@ function getCookie(name: string): string | null {
     return null;
 }
 
-function getImagePath(imageName:string, imagePath:string="../public/item_icons/"): string{
+function getImagePath(imageName:string, imagePath:string="/item_icons/"): string{
     return imagePath + imageName;
 }
 
@@ -25,12 +25,12 @@ const ShopComponent: FC<Props> = ({points, handleClose}) => {
     const {sockets} = useWebSocket();
     const socket = sockets[getCookie("lobbyCode")];
 
-    const image_path = "../public/item_icons/"
+    const image_path = "/item_icons/"
   const items = [
-        {name: "Sonar", imageUrl: getImagePath("BSL-Sonar.png"), price: 5},
+        // {name: "Sonar", imageUrl: getImagePath("BSL-Sonar.png"), price: 5},
         {name: "Bomb", imageUrl: getImagePath("BSL-Bomb.png"), price: 20},
         {name: "Nuke", imageUrl: getImagePath("BSL-Nuke.png"), price: 50 },
-        {name: "Decoy", imageUrl: getImagePath("BSL-Decoy.png"), price: 5},
+        // {name: "Decoy", imageUrl: getImagePath("BSL-Decoy.png"), price: 5},
   ];
 
     const handlePurchase = (item_name: string, item_price: number) => {

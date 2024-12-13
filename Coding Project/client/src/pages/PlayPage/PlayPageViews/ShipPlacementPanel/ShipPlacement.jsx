@@ -107,7 +107,7 @@ const ShipPlacementPanel = ({sessionId, displayName, lobbyCode, color}) => {
 
 
     async function populatePlayerBoard(lobbyCode, sessionId, playerBoard) {
-        const url = `https://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/${lobbyCode}/populatePlayerBoard`;
+        const url = `${import.meta.env.VITE_WEBSOCKET_URL}/lobby/${lobbyCode}/populatePlayerBoard`;
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -124,7 +124,7 @@ const ShipPlacementPanel = ({sessionId, displayName, lobbyCode, color}) => {
         }
     }
     async function updateAreShipsPlaced(lobbyCode, sessionId) {
-        const url = `https://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/${lobbyCode}/updateAreShipsPlaced`;
+        const url = `${import.meta.env.VITE_WEBSOCKET_URL}/lobby/${lobbyCode}/updateAreShipsPlaced`;
         const response = await fetch(url, {
             method: 'POST',
             headers: {

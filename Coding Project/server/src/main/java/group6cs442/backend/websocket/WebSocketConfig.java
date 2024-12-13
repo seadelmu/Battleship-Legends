@@ -1,6 +1,8 @@
 package group6cs442.backend.websocket;
 
 import group6cs442.backend.websocket.WebSocketHandler;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
@@ -16,8 +18,15 @@ public class WebSocketConfig implements WebSocketConfigurer {
         this.webSocketHandler = webSocketHandler;
     }
 
+    @Value("${environment}")
+    private String environment;
+
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(webSocketHandler, "/wss/{lobbyCode}").setAllowedOrigins("*");
+        String protocol = "ws";
+        if ("production".equals(environment)) {
+            protocol = "wss";
+        }
+        registry.addHandler(webSocketHandler, "/" + protocol + "/{lobbyCode}").setAllowedOrigins("*");
     }
 }

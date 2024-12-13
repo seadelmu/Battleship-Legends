@@ -40,7 +40,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         // Send the sessionId to the client
         session.sendMessage(new TextMessage("{\"sessionId\": \"" + session.getId() + "\"}"));
-        System.out.println("Connection established in lobby " + lobbyCode + ". Total clients: " + lobbySessions.get(lobbyCode).size());
+        System.out.println("Connection established in lobby " + lobbyCode + ". Total clients: "
+                + lobbySessions.get(lobbyCode).size());
         // Ensure the new player gets the updated list of players
         broadcastPlayersUpdate(lobbyCode);
     }
@@ -56,12 +57,26 @@ public class WebSocketHandler extends TextWebSocketHandler {
             if (player != null) {
                 System.out.println("PlayerID is:" + player.getId());
                 removePlayerFromLobby(lobbyCode, player);
-                turnSystems.get(lobbyCode).playerLeave(player);
-                System.out.println("Player removed..");
+                TurnSystem turnSystem = turnSystems.get(lobbyCode);
+                if (turnSystem != null) {
+                    turnSystem.playerLeave(player);
+                    System.out.println("Player removed..");
+                } else {
+                    System.out.println("TurnSystem not found for lobby: " + lobbyCode);
+                }
             } else {
                 System.out.println("Player not found for session ID: " + sessionId);
             }
             System.out.println("Connection closed in lobby " + lobbyCode + ". Total clients: " + sessions.size());
+
+            // Remove empty lobbies and their associated data
+            if (sessions.isEmpty()) {
+                lobbySessions.remove(lobbyCode);
+                lobbyPlayers.remove(lobbyCode);
+                turnSystems.remove(lobbyCode);
+                lobbies.remove(lobbyCode);
+                System.out.println("Lobby " + lobbyCode + " is empty and has been removed.");
+            }
         }
     }
 
@@ -85,13 +100,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 }
             }
         }
-        if ("ADD_SHIP".equals(type)){
+        if ("ADD_SHIP".equals(type)) {
             String playerId = session.getId();
             String lobbyCode = getLobbyCode(session);
             if (lobbyCode != null) {
                 Player player = lobbyPlayers.getOrDefault(lobbyCode, Collections.emptyMap()).get(playerId);
                 if (player != null) {
-                    player.getGameBoard().AddShip(jsonNode.get("y").asInt(), jsonNode.get("x").asInt(), jsonNode.get("length").asInt(), jsonNode.get("orientation").asText(), jsonNode.get("shipId").asInt());
+                    player.getGameBoard().AddShip(jsonNode.get("y").asInt(), jsonNode.get("x").asInt(),
+                            jsonNode.get("length").asInt(), jsonNode.get("orientation").asText(),
+                            jsonNode.get("shipId").asInt());
                     broadcastPlayersUpdate(lobbyCode);
                     System.out.println("Player" + player.getDisplayName() + "placed a ship in lobby" + lobbyCode);
                 }
@@ -104,7 +121,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             if (lobbyCode != null) {
                 Player playerWhoShot = lobbyPlayers.getOrDefault(lobbyCode, Collections.emptyMap()).get(playerId);
-                Player player = lobbyPlayers.getOrDefault(lobbyCode, Collections.emptyMap()).get(jsonNode.get("serverPlayer").asText());
+                Player player = lobbyPlayers.getOrDefault(lobbyCode, Collections.emptyMap())
+                        .get(jsonNode.get("serverPlayer").asText());
 
                 if (player != null && playerWhoShot != null) {
                     String selectedPowerUp = playerWhoShot.getGameBoard().getSelectedPowerUp();
@@ -113,7 +131,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
                         // Call the respective power-up function based on the selected power-upc
                         switch (selectedPowerUp) {
                             case "Bomb":
-                                player.getGameBoard().crossShotPowerUp(jsonNode.get("row").asInt(), jsonNode.get("col").asInt(), jsonNode.get("color").asText());
+                                player.getGameBoard().crossShotPowerUp(jsonNode.get("row").asInt(),
+                                        jsonNode.get("col").asInt(), jsonNode.get("color").asText());
                                 playerWhoShot.getGameBoard().removePowerup("Bomb");
                                 playerWhoShot.getGameBoard().setSelectedPowerUp("Default");
                                 break;
@@ -132,20 +151,27 @@ public class WebSocketHandler extends TextWebSocketHandler {
                         isPlayerLastAlive(lobbyCode, turnSystem, player);
                     } else {
                         // Proceed with the hit cell action if no power-up is selected
-                        if (player.getGameBoard().getPlayerBoard()[jsonNode.get("row").asInt()][jsonNode.get("col").asInt()].contains("M") ||
-                                player.getGameBoard().getPlayerBoard()[jsonNode.get("row").asInt()][jsonNode.get("col").asInt()].contains("P_HIT") ||
-                                player.getGameBoard().getPlayerBoard()[jsonNode.get("row").asInt()][jsonNode.get("col").asInt()].contains("B_H")) {
+                        if (player.getGameBoard().getPlayerBoard()[jsonNode.get("row").asInt()][jsonNode.get("col")
+                                .asInt()].contains("M") ||
+                                player.getGameBoard().getPlayerBoard()[jsonNode.get("row").asInt()][jsonNode.get("col")
+                                        .asInt()].contains("P_HIT")
+                                ||
+                                player.getGameBoard().getPlayerBoard()[jsonNode.get("row").asInt()][jsonNode.get("col")
+                                        .asInt()].contains("B_H")) {
                             System.out.println("Cell has already been hit. Turn will not change.");
                         } else {
-                            player.getGameBoard().hit(jsonNode.get("row").asInt(), jsonNode.get("col").asInt(), jsonNode.get("color").asText());
+                            player.getGameBoard().hit(jsonNode.get("row").asInt(), jsonNode.get("col").asInt(),
+                                    jsonNode.get("color").asText());
                             System.out.println("Is the player alive? " + player.getGameBoard().getPlayerLife());
                             broadcastPlayersUpdate(lobbyCode);
 
-                            if (player.getGameBoard().getPlayerBoard()[jsonNode.get("row").asInt()][jsonNode.get("col").asInt()].contains("B")) {
+                            if (player.getGameBoard().getPlayerBoard()[jsonNode.get("row").asInt()][jsonNode.get("col")
+                                    .asInt()].contains("B")) {
                                 System.out.println(player.getDisplayName() + " has just been struck!");
                                 playerWhoShot.getGameBoard().incrementPoints();
                                 broadcastPlayersUpdate(lobbyCode);
-                            } else if (player.getGameBoard().getPlayerBoard()[jsonNode.get("row").asInt()][jsonNode.get("col").asInt()].contains("P")) {
+                            } else if (player.getGameBoard().getPlayerBoard()[jsonNode.get("row").asInt()][jsonNode
+                                    .get("col").asInt()].contains("P")) {
                                 System.out.println(player.getDisplayName() + " hit a point cell!");
                                 playerWhoShot.getGameBoard().hitPointCell();
                                 broadcastPlayersUpdate(lobbyCode);
@@ -172,8 +198,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                             "type", "RECEIVE_MESSAGE",
                             "displayName", player.getDisplayName(),
                             "displayNameColor", color,
-                            "message", chat
-                    ));
+                            "message", chat));
 
                     // Broadcast the message to all clients in the lobby
                     for (WebSocketSession wsSession : lobbySessions.getOrDefault(lobbyCode, Collections.emptySet())) {
@@ -193,7 +218,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 if (player != null) {
                     player.getGameBoard().hidePowerUps();
                     broadcastPlayersUpdate(lobbyCode);
-                    System.out.println("Player " + player.getDisplayName() + " has power ups added to their stuff now" + lobbyCode);
+                    System.out.println("Player " + player.getDisplayName() + " has power ups added to their stuff now"
+                            + lobbyCode);
                 }
             }
         }
@@ -204,9 +230,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
             if (lobbyCode != null) {
                 Player player = lobbyPlayers.getOrDefault(lobbyCode, Collections.emptyMap()).get(playerId);
                 if (player != null) {
-                    player.getGameBoard().purchasePowerup(jsonNode.get("item_name").asText(), jsonNode.get("item_price").asInt());
+                    player.getGameBoard().purchasePowerup(jsonNode.get("item_name").asText(),
+                            jsonNode.get("item_price").asInt());
                     broadcastPlayersUpdate(lobbyCode);
-                    System.out.println("Player " + player.getDisplayName() + " has purchased a power up in lobby " + lobbyCode);
+                    System.out.println(
+                            "Player " + player.getDisplayName() + " has purchased a power up in lobby " + lobbyCode);
                 }
             }
         }
@@ -219,7 +247,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 if (player != null) {
                     player.getGameBoard().setSelectedPowerUp(jsonNode.get("powerUp").asText());
                     broadcastPlayersUpdate(lobbyCode);
-                    System.out.println("Player " + player.getDisplayName() + " has selected a power up in lobby " + lobbyCode);
+                    System.out.println(
+                            "Player " + player.getDisplayName() + " has selected a power up in lobby " + lobbyCode);
                 }
             }
         }
@@ -235,7 +264,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
             for (WebSocketSession wsSession : lobbySessions.getOrDefault(lobbyCode, Collections.emptySet())) {
                 wsSession.sendMessage(new TextMessage(broadcastMessage));
             }
-            int alivePlayersCount = lobbyPlayers.get(lobbyCode).values().stream().filter(p -> p.getGameBoard().getPlayerLife()).toArray().length;
+            int alivePlayersCount = lobbyPlayers.get(lobbyCode).values().stream()
+                    .filter(p -> p.getGameBoard().getPlayerLife()).toArray().length;
             System.out.println("Alive Players Count: " + alivePlayersCount);
 
             Optional<Player> winnerOptional = lobbyPlayers.get(lobbyCode).values().stream()
@@ -248,8 +278,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 String gameOverMessage = new ObjectMapper().writeValueAsString(Map.of(
                         "type", "GAME_OVER",
                         "winnerId", winner.getId(),
-                        "winnerName", winner.getDisplayName()
-                ));
+                        "winnerName", winner.getDisplayName()));
 
                 for (WebSocketSession wsSession : lobbySessions.getOrDefault(lobbyCode, Collections.emptySet())) {
                     String result = wsSession.getId().equals(winner.getId()) ? "You won!" : "You lost!";
@@ -272,13 +301,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    // Currently does nothing because the playerBoard is already occupied from the sent message
-    public void populatePlayerBoard(WebSocketSession session, String lobbyCode, String[][] playerBoard) throws IOException {
+    // Currently does nothing because the playerBoard is already occupied from the
+    // sent message
+    public void populatePlayerBoard(WebSocketSession session, String lobbyCode, String[][] playerBoard)
+            throws IOException {
         Lobby lobby = lobbies.get(lobbyCode);
         if (lobby != null) {
             Player player = lobbyPlayers.getOrDefault(lobbyCode, Collections.emptyMap()).get(session.getId());
             if (player != null) {
-            // lobby.setPlayerBoard(playerBoard, player);
+                // lobby.setPlayerBoard(playerBoard, player);
                 // I guess it broadcasts stuff, but that's pretty much nothing
                 broadcastPlayersUpdate(lobbyCode);
             }
@@ -295,8 +326,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
     public void addPlayerToLobby(String lobbyCode, Player player) throws IOException {
-        lobbies.get(lobbyCode).addPlayer(player);
-        lobbyPlayers.computeIfAbsent(lobbyCode, k -> Collections.synchronizedMap(new LinkedHashMap<>())).put(player.getId(), player);
+        Lobby lobby = lobbies.get(lobbyCode);
+        if (lobby == null) {
+            System.err.println("Lobby " + lobbyCode + " does not exist. Cannot add player " + player.getDisplayName());
+            return;
+        }
+
+        lobby.addPlayer(player);
+        lobbyPlayers.computeIfAbsent(lobbyCode, k -> Collections.synchronizedMap(new LinkedHashMap<>()))
+                .put(player.getId(), player);
         System.out.println("Player " + player.getDisplayName() + " added to lobby " + lobbyCode);
         System.out.println("Player's PlayerID is:" + player.getId());
 
@@ -325,7 +363,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
         return lobbyPlayers.getOrDefault(lobbyCode, Collections.emptyMap());
     }
 
-    // This method is used to broadcast the updated list of players to all clients in the lobby
+    // This method is used to broadcast the updated list of players to all clients
+    // in the lobby
     private synchronized void broadcastPlayersUpdate(String lobbyCode) throws IOException {
         Set<WebSocketSession> sessions = lobbySessions.get(lobbyCode);
         if (sessions != null) {

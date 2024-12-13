@@ -1,6 +1,5 @@
 package group6cs442.backend;
 
-
 import java.util.*;
 
 // GameBoard Class
@@ -25,17 +24,15 @@ public class GameBoard {
 		int[][] locations = new int[5][2];
 	}
 
-
-	String[][]PlayerBoard;
-	String[][]ServerBoard;
+	String[][] PlayerBoard;
+	String[][] ServerBoard;
 	int LiveShips = 0;
 	ShipInfo[] allShips = new ShipInfo[5];
 	public boolean playerLife = true;
-	public int points = 1000;
+	public int points = 0;
 	// Give the user an inventory of powerups
 	List<Map<String, Integer>> powerUpInventory = new ArrayList<>();
 	public String selectedPowerUp = "Default";
-
 
 	public void purchasePowerup(String powerup, int cost) {
 		if (losePoints(cost)) {
@@ -80,7 +77,7 @@ public class GameBoard {
 	}
 
 	public void setSelectedPowerUp(String powerUp) {
-				selectedPowerUp = powerUp;
+		selectedPowerUp = powerUp;
 	}
 
 	public String getSelectedPowerUp() {
@@ -91,16 +88,14 @@ public class GameBoard {
 		return powerUpInventory;
 	}
 
-
 	public String[][] getPlayerBoard() {
 		return PlayerBoard;
 	}
 
-
 	// GameBoard()
 	//
 	// Default constructor. Initializes PlayerBoard and ServerBoard
-	//		to 10x10 2D array with "." strings to make an empty board.
+	// to 10x10 2D array with "." strings to make an empty board.
 	public GameBoard() {
 		PlayerBoard = new String[10][10];
 		ServerBoard = new String[10][10];
@@ -128,42 +123,39 @@ public class GameBoard {
 		points = points + 10;
 	}
 
-	public boolean losePoints(int cost){
+	public boolean losePoints(int cost) {
 
-		if( points > cost){
+		if (points > cost) {
 			points = points - cost;
 			return true;
-		}
-		else{
+		} else {
 			System.out.println("Player does not have enough points to make this purchase.");
 			return false;
 		}
 	}
-	
+
 	// call this after all ships are placed via rest api?
 	public void hidePowerUps() {
 		int powerUpCount = 0;
 		int row = 0;
 		int col = 0;
 		while (powerUpCount != 5) {
-			row = (int)(Math.random() * 10);
-			col = (int)(Math.random() * 10);
-			
+			row = (int) (Math.random() * 10);
+			col = (int) (Math.random() * 10);
+
 			if (PlayerBoard[row][col] == ". ") {
 				PlayerBoard[row][col] = "P";
 				powerUpCount++;
 			}
 		}
 	}
-	
-
 
 	// AddShip()
 	//
 	// Method to add ships to the board, given an row,col coordinate,
-	// 		the size of the ship, orientation of the ship, and a number identifier.
-	//		Method also calls the checkBounds method to see if the entire ship fits
-	//		in the bounds of the board.
+	// the size of the ship, orientation of the ship, and a number identifier.
+	// Method also calls the checkBounds method to see if the entire ship fits
+	// in the bounds of the board.
 	public int AddShip(int row, int col, int shipSize, String orientation, int number) {
 		int err = checkBounds(row, col, shipSize, orientation);
 		String shipIdentifier = "B" + number;
@@ -177,33 +169,33 @@ public class GameBoard {
 			if (Objects.equals(orientation, "north")) {
 
 				for (int i = 0; i < shipSize; i++) {
-					PlayerBoard[row-i][col] = shipIdentifier;
-					newShip.locations[i][0] = row-i;
+					PlayerBoard[row - i][col] = shipIdentifier;
+					newShip.locations[i][0] = row - i;
 					newShip.locations[i][1] = col;
 
 				}
 			} else if (Objects.equals(orientation, "south")) {
 
 				for (int i = 0; i < shipSize; i++) {
-					PlayerBoard[row+i][col] = shipIdentifier;
-					newShip.locations[i][0] = row+i;
+					PlayerBoard[row + i][col] = shipIdentifier;
+					newShip.locations[i][0] = row + i;
 					newShip.locations[i][1] = col;
 
 				}
 			} else if (Objects.equals(orientation, "east")) {
 
 				for (int i = 0; i < shipSize; i++) {
-					PlayerBoard[row][col+i] = shipIdentifier;
+					PlayerBoard[row][col + i] = shipIdentifier;
 					newShip.locations[i][0] = row;
-					newShip.locations[i][1] = col+i;
+					newShip.locations[i][1] = col + i;
 
 				}
 			} else if (Objects.equals(orientation, "west")) {
 
 				for (int i = 0; i < shipSize; i++) {
-					PlayerBoard[row][col-i] = shipIdentifier;
+					PlayerBoard[row][col - i] = shipIdentifier;
 					newShip.locations[i][0] = row;
-					newShip.locations[i][1] = col-i;
+					newShip.locations[i][1] = col - i;
 
 				}
 			} else {
@@ -211,7 +203,7 @@ public class GameBoard {
 				return -3;
 			}
 
-			allShips[number-1] = newShip;
+			allShips[number - 1] = newShip;
 			LiveShips++;
 			return 1;
 
@@ -221,14 +213,13 @@ public class GameBoard {
 
 	}
 
-
 	// hit()
 	//
 	//
 	// Method marks hits or misses on the PlayerBoard and ServerBoard
-	//	Requires a row, col coordinate
-	//	Method also makes calls to the checkSunkenShup() method
-	//		to check for any sunken ships
+	// Requires a row, col coordinate
+	// Method also makes calls to the checkSunkenShup() method
+	// to check for any sunken ships
 	//
 	public void hit(int row, int col, String color) {
 		if (row >= 0 && row < 10 && col >= 0 && col < 10) {
@@ -246,50 +237,48 @@ public class GameBoard {
 				} else if (cell.contains("D")) {
 					PlayerBoard[row][col] = "DH_" + color;
 					ServerBoard[row][col] = "DH_" + color;
-				}
-				else {
+				} else {
 					PlayerBoard[row][col] = "M_" + color;
 					ServerBoard[row][col] = "M_" + color;
 				}
 			}
 		}
 	}
-	
-	
+
 	//
 	//
 	// PowerUp/Special Ability Methods
 	//
 	//
 
-	
 	// crossShotPowerUp()
 	//
 	// Method performs calls to the hit method, 5 times, making a cross shape
 	public void crossShotPowerUp(int row, int col, String color) {
 		if (row >= 0 && row < 10 && col >= 0 && col < 10) {
 			// note that since the hit function already check bounds of the coordinate,
-			//  some hit calls won't modify the board if they are found to be out of bounds.
+			// some hit calls won't modify the board if they are found to be out of bounds.
 			hit(row, col, color);
-			hit(row+1, col, color);
-			hit(row-1, col, color);
-			hit(row, col+1, color);
-			hit(row, col-1, color);
+			hit(row + 1, col, color);
+			hit(row - 1, col, color);
+			hit(row, col + 1, color);
+			hit(row, col - 1, color);
 		}
 	}
-	
+
 	// sonarPowerUp()
 	//
-	// Method functions similarly to the cross shot, but reveals any ships in the selected area
+	// Method functions similarly to the cross shot, but reveals any ships in the
+	// selected area
 	void sonarPowerUp(int row, int col) {
-		sonarCheck(row+1, col);
-		sonarCheck(row-1, col);
-		sonarCheck(row, col+1);
-		sonarCheck(row, col-1);
+		sonarCheck(row + 1, col);
+		sonarCheck(row - 1, col);
+		sonarCheck(row, col + 1);
+		sonarCheck(row, col - 1);
 		sonarCheck(row, col);
-		
+
 	}
-	
+
 	// sonarCheck
 	//
 	// helper function for sonarPowerUp() method
@@ -299,11 +288,11 @@ public class GameBoard {
 				if (ServerBoard[row][col].equals(". ")) {
 					ServerBoard[row][col] = "S ";
 				}
-				
+
 			}
 		}
 	}
-	
+
 	// sonarClear()
 	//
 	// Clears the board of any revealed squares by sonar.
@@ -317,18 +306,18 @@ public class GameBoard {
 			}
 		}
 	}
-	
+
 	// nukePowerUp()
 	//
 	// Calls the hit function on every square of the board.
 	public void nukePowerUp(String color) {
 		for (int i = 0; i < 10; i++) {
-			for (int j = 0; j< 10; j++) {
+			for (int j = 0; j < 10; j++) {
 				hit(i, j, color);
 			}
 		}
 	}
-	
+
 	// hideDecoy()
 	//
 	// Hides a decoy on the board that can be hit like any other ship
@@ -337,17 +326,15 @@ public class GameBoard {
 			if (PlayerBoard[row][col] == ". ") {
 				PlayerBoard[row][col] = "D ";
 			}
-			
+
 		}
 	}
-	
-	
+
 	//
 	//
-	// Other Methods 
+	// Other Methods
 	//
 	//
-	
 
 	// checkSunkenShip()
 	//
@@ -358,8 +345,7 @@ public class GameBoard {
 				int hitCounter = 0;
 				for (int i = 0; i < ship.size; i++) {
 					if (ship.locations[i] != null) {
-						String shipMarker = PlayerBoard[ship.locations[i][0]]
-								[ship.locations[i][1]];
+						String shipMarker = PlayerBoard[ship.locations[i][0]][ship.locations[i][1]];
 						// count if hit is marked
 						if (!shipMarker.equals(ship.shipName)) {
 							hitCounter++;
@@ -369,13 +355,12 @@ public class GameBoard {
 						if (hitCounter == ship.size) {
 							ship.status = "dead";
 						}
-					} 
+					}
 				}
 			}
 		}
 		checkPlayerLife();
 	}
-
 
 	// checkPlayerLife()
 	//
@@ -406,63 +391,61 @@ public class GameBoard {
 		return playerLife;
 	}
 
-
 	// setPlayerLife()
 	//
 	// sets playerLife to new boolean value
 	public void setPlayerLife(boolean playerLife) {
 		this.playerLife = playerLife;
 	}
-	
 
 	// checkBounds
 	//
 	// Method checks if the coordinate position exists on the board, and
-	//		if the entire ship fits within the board considering its orientation
-	//		Method will return 1 if ship is in bounds, -1 if out of bounds,
-	//		and -2 if the ship will collide with another ship
+	// if the entire ship fits within the board considering its orientation
+	// Method will return 1 if ship is in bounds, -1 if out of bounds,
+	// and -2 if the ship will collide with another ship
 	public int checkBounds(int row, int col, int size, String orientation) {
 
 		if (Objects.equals(orientation, "north")) {
-			for(int i = 0; i < size; i ++) {
-				if ((row-i) < 0) {
+			for (int i = 0; i < size; i++) {
+				if ((row - i) < 0) {
 					System.out.println("ERROR: Out of bounds");
 					return -1;
 				}
-				if(!PlayerBoard[row-i][col].equals(". ")) {
+				if (!PlayerBoard[row - i][col].equals(". ")) {
 					System.out.println("ERROR: Ship Collision");
 					return -2;
 				}
 			}
 		} else if (Objects.equals(orientation, "south")) {
-			for(int i = 0; i < size; i ++) {
-				if ((row+i) >= 10) {
+			for (int i = 0; i < size; i++) {
+				if ((row + i) >= 10) {
 					System.out.println("ERROR: Out of bounds");
 					return -1;
 				}
-				if(!PlayerBoard[row+i][col].equals(". ")) {
+				if (!PlayerBoard[row + i][col].equals(". ")) {
 					System.out.println("ERROR: Ship Collision");
 					return -2;
 				}
 			}
 		} else if (Objects.equals(orientation, "east")) {
-			for(int i = 0; i < size; i ++) {
-				if ((col+i) >= 10) {
+			for (int i = 0; i < size; i++) {
+				if ((col + i) >= 10) {
 					System.out.println("ERROR: Out of bounds");
 					return -1;
 				}
-				if(!PlayerBoard[row][col+i].equals(". ")) {
+				if (!PlayerBoard[row][col + i].equals(". ")) {
 					System.out.println("ERROR: Ship Collision");
 					return -2;
 				}
 			}
 		} else if (Objects.equals(orientation, "west")) {
-			for(int i = 0; i < size; i ++) {
-				if ((col-i) < 0) {
+			for (int i = 0; i < size; i++) {
+				if ((col - i) < 0) {
 					System.out.println("ERROR: Out of bounds");
 					return -1;
 				}
-				if(!PlayerBoard[row][col-i].equals(". ")) {
+				if (!PlayerBoard[row][col - i].equals(". ")) {
 					System.out.println("ERROR: Ship Collision");
 					return -2;
 				}
@@ -471,7 +454,6 @@ public class GameBoard {
 
 		return 1;
 	}
-	
 
 	// printBoard()
 	//
@@ -498,88 +480,82 @@ public class GameBoard {
 		System.out.println();
 	}
 
-	
-	
-
 	//
 	// main function for testing
 	//
 	public static void main(String[] args) {
 
-				GameBoard x = new GameBoard();
-		
-				x.printBoard();
-		
-				x.AddShip(0, 0, 5, "south", 1);
-		
-				x.printBoard();
-		
-				int y = x.checkBounds(4, 0, 5, "south");
-		
-				System.out.println(y);
-		
-				y = x.checkBounds(5, 0, 2, "east");
-		
-				System.out.println(y);
-		
-				y = x.checkBounds(5, 3, 4, "west");
-		
-				System.out.println(y);
-		
-				x.AddShip(5, 0, 2, "east", 2);
-		
-				x.AddShip(8, 9, 4, "west", 3);
-		
-				x.printBoard();
-		//
-		//		for (ShipInfo s : x.allShips) {
-		//			if (s != null) {
-		//				for (int i = 0; i < 5; i++) {
-		//					if (s.locations[i] != null) {
-		//						System.out.print(s.locations[i][0] + ", ");
-		//						System.out.println(s.locations[i][1]);
-		//					}
-		//				}
-		//				System.out.println();
-		//			}
-		//
-		//		}
-		//
-				
-//				x.hidePowerUps();
-//				
-				x.hit(0, 0, "blue");
-//				x.hit(1, 0, "blue");
-//				x.hit(2, 0, "blue");
-//				x.hit(3, 0, "blue");
-//				x.printBoard();
-//				System.out.println(x.allShips[0].status);
-//
-//				x.crossShotPowerUp(7, 7, "blue");
-//				x.printBoard();
-//				x.crossShotPowerUp(0, 9, "blue");
-//				x.printBoard();
-//				
-//				x.sonarPowerUp(7, 9);
-//				x.printBoard();
-//				x.sonarClear();
-//				x.printBoard();
-		//		
-//				x.hit(4, 0, "blue");
-//				x.printBoard();
-//				System.out.println(x.allShips[0].status);
+		GameBoard x = new GameBoard();
 
-				x.hideDecoy(5, 5);
-//				x.nukePowerUp("green");
-				x.printBoard();
-				x.hit(5, 5, "yellow");
-				x.printBoard();
-		//
-		//		x.hit(8, 9);
-		//		x.printBoard();
+		x.printBoard();
 
+		x.AddShip(0, 0, 5, "south", 1);
+
+		x.printBoard();
+
+		int y = x.checkBounds(4, 0, 5, "south");
+
+		System.out.println(y);
+
+		y = x.checkBounds(5, 0, 2, "east");
+
+		System.out.println(y);
+
+		y = x.checkBounds(5, 3, 4, "west");
+
+		System.out.println(y);
+
+		x.AddShip(5, 0, 2, "east", 2);
+
+		x.AddShip(8, 9, 4, "west", 3);
+
+		x.printBoard();
+		//
+		// for (ShipInfo s : x.allShips) {
+		// if (s != null) {
+		// for (int i = 0; i < 5; i++) {
+		// if (s.locations[i] != null) {
+		// System.out.print(s.locations[i][0] + ", ");
+		// System.out.println(s.locations[i][1]);
+		// }
+		// }
+		// System.out.println();
+		// }
+		//
+		// }
+		//
+
+		// x.hidePowerUps();
+		//
+		x.hit(0, 0, "blue");
+		// x.hit(1, 0, "blue");
+		// x.hit(2, 0, "blue");
+		// x.hit(3, 0, "blue");
+		// x.printBoard();
+		// System.out.println(x.allShips[0].status);
+		//
+		// x.crossShotPowerUp(7, 7, "blue");
+		// x.printBoard();
+		// x.crossShotPowerUp(0, 9, "blue");
+		// x.printBoard();
+		//
+		// x.sonarPowerUp(7, 9);
+		// x.printBoard();
+		// x.sonarClear();
+		// x.printBoard();
+		//
+		// x.hit(4, 0, "blue");
+		// x.printBoard();
+		// System.out.println(x.allShips[0].status);
+
+		x.hideDecoy(5, 5);
+		// x.nukePowerUp("green");
+		x.printBoard();
+		x.hit(5, 5, "yellow");
+		x.printBoard();
+		//
+		// x.hit(8, 9);
+		// x.printBoard();
 
 	}
 }
-
-
