@@ -6,7 +6,7 @@ const WebSocket = ({ lobbyCode }) => {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        const ws = new window.WebSocket(`ws://localhost:8080/ws/${lobbyCode}`);
+        const ws = new window.WebSocket(`ws://${import.meta.env.VITE_WEBSOCKET_URL}/ws/${lobbyCode}`);
 
         ws.onopen = () => {
             console.log('WebSocket connection established');

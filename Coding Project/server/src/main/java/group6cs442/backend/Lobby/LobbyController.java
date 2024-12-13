@@ -1,12 +1,13 @@
 package group6cs442.backend.Lobby;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/lobby")
-@CrossOrigin(origins = "http://localhost:5173") // Currently hardcoded: TODO: Move to application.properties
+@CrossOrigin(origins = {"https://battleship-legends.onrender.com", "http://localhost:5173"})
 public class LobbyController {
 
     @Autowired

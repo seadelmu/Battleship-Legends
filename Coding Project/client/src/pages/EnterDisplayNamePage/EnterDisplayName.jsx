@@ -53,7 +53,7 @@ const EnterDisplayName = () => {
         const player = {displayName: displayName, id: sessionId};
 
 
-        fetch(`http://localhost:8080/lobby/${getCookie('lobbyCode')}/addPlayer`, {
+        fetch(`http://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/${getCookie('lobbyCode')}/addPlayer`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

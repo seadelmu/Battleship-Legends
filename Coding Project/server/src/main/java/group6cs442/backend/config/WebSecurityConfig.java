@@ -16,7 +16,7 @@ public class WebSecurityConfig {
                 registry.addMapping("/**")
                         // if we are hosting this on cloud,
                         // change this to our custom domain name
-                        .allowedOrigins("http://localhost:5173")
+                        .allowedOrigins("https://battleship-legends.onrender.com", "http://localhost:5173")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

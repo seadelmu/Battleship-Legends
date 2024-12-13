@@ -8,7 +8,7 @@ export const WebSocketProvider = ({ children, setSessionId}) => {
 
     const connectToLobby = (lobbyCode) => {
         if (!sockets[lobbyCode]) {
-            const ws = new window.WebSocket(`ws://localhost:8080/ws/${lobbyCode}`);
+            const ws = new window.WebSocket(`ws://${import.meta.env.VITE_WEBSOCKET_URL}/ws/${lobbyCode}`);
             console.log('New lobby created');
             ws.onmessage = function(event) {
                 const data = JSON.parse(event.data);
