@@ -28,7 +28,7 @@ const ShopComponent: FC<Props> = ({points, handleClose}) => {
     const image_path = "/item_icons/"
   const items = [
         // {name: "Sonar", imageUrl: getImagePath("BSL-Sonar.png"), price: 5},
-        {name: "Bomb", imageUrl: getImagePath("BSL-Bomb.png"), price: 20},
+        {name: "Bomb", imageUrl: getImagePath("BSL-Bomb.png"), price: 10},
         {name: "Nuke", imageUrl: getImagePath("BSL-Nuke.png"), price: 50 },
         // {name: "Decoy", imageUrl: getImagePath("BSL-Decoy.png"), price: 5},
   ];

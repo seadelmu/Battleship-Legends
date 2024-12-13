@@ -76,6 +76,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 turnSystems.remove(lobbyCode);
                 lobbies.remove(lobbyCode);
                 System.out.println("Lobby " + lobbyCode + " is empty and has been removed.");
+            } else {
+                // Broadcast updated player list to remaining clients
+                broadcastPlayersUpdate(lobbyCode);
             }
         }
     }

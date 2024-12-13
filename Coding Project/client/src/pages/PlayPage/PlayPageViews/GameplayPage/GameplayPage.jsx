@@ -113,6 +113,29 @@ const GameplayPage = ({playerData, sessionId, pageView}) => {
         };
     }, [socket]);
 
+    useEffect(() => {
+        const handlePlayerLeave = (message) => {
+            const data = JSON.parse(message.data);
+            if (data.type === 'PLAYER_LEAVE') {
+                const updatedPlayerData = playerData.filter(player => player.id !== data.playerId);
+                setPlayerData(updatedPlayerData);
+                if (serverPlayer.id === data.playerId) {
+                    handleRightArrowClick();
+                }
+            }
+        };
+
+        if (socket) {
+            socket.addEventListener('message', handlePlayerLeave);
+        }
+
+        return () => {
+            if (socket) {
+                socket.removeEventListener('message', handlePlayerLeave);
+            }
+        };
+    }, [socket, playerData, serverPlayer]);
+
     const hitCell = (row, col) => {
         if (socket) {
             const message = JSON.stringify({
