@@ -159,6 +159,11 @@ const ShipPlacementPanel = ({sessionId, displayName, lobbyCode, color}) => {
             setCurrentShipIndex(currentShipIndex + 1);
             addShip(col, row, size, orientation, currentShip.id);
             setTentativePlacement(null);
+
+            // Check if all ships are placed
+            if (currentShipIndex + 1 >= ships.length) {
+                updateAreShipsPlaced(getCookie('lobbyCode'), sessionId);
+            }
         }
     };
 
