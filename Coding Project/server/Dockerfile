@@ -1,15 +1,17 @@
 
 # Start with an official OpenJDK runtime
-FROM openjdk:17-jdk-alpine
+FROM maven:3.8.5-openjdk-17 as build
 
-# Set the working directory in the container
-WORKDIR /app
+COPY . .
 
-# Copy the jar file into the container
-COPY target/battleship.jar /app/app.jar
+RUN mvn clean package -DskipTests
+
+FROM openjdk:17.0.1-jdk-slim
+
+COPY --from=build /target/battleship.jar /app/battleship.jar
 
 # Expose the port Spring Boot runs on
 EXPOSE 8080
 
 # Run the jar file
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/battleship.jar"]
