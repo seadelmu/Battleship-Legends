@@ -1,14 +1,18 @@
-
 # Start with an official OpenJDK runtime
-FROM maven:3.8.5-openjdk-17 as build
+FROM maven:3.8.5-openjdk-17 AS build
 
-COPY . .
+WORKDIR /app
+
+COPY pom.xml .
+COPY src ./src
 
 RUN mvn clean package -DskipTests
 
 FROM openjdk:17.0.1-jdk-slim
 
-COPY --from=build /target/battleship.jar /app/battleship.jar
+WORKDIR /app
+
+COPY --from=build /app/target/battleship.jar /app/battleship.jar
 
 # Expose the port Spring Boot runs on
 EXPOSE 8080
