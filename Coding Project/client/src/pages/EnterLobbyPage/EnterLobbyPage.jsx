@@ -13,7 +13,7 @@ function doesLobbyExist(lobbyCode, navigate, connectToLobby) {
 
     let exists = false;
     console.log('New LobbyCode: ' + lobbyCode);
-    fetch(`http://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/doesLobbyExist/${lobbyCode}`, {
+    fetch(`https://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/doesLobbyExist/${lobbyCode}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ const EnterLobbyPage = () => {
 
     async function createLobby(password, maxPlayers, lobbyCode) {
         try {
-            const response = await fetch(`http://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/createLobby?password=${password}&maxPlayers=${maxPlayers}&lobbyCode=${lobbyCode}`, {
+            const response = await fetch(`https://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/createLobby?password=${password}&maxPlayers=${maxPlayers}&lobbyCode=${lobbyCode}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
