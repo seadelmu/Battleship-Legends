@@ -24,7 +24,7 @@ const WebSocket = ({ lobbyCode }) => {
         setSocket(ws);
 
         // Fetch the number of connected clients from a specific lobby code
-        fetch(`/ws/${lobbyCode}`)
+        fetch(`/wss/${lobbyCode}`)
             .then(response => response.json())
             .then(data => setConnectedClients(data));
 
