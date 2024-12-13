@@ -7,7 +7,7 @@ const WebSocket = ({ lobbyCode }) => {
 
     useEffect(() => {
         const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-        const ws = new window.WebSocket(`${protocol}://${import.meta.env.VITE_WEBSOCKET_URL}/ws/${lobbyCode}`);
+        const ws = new window.WebSocket(`wss://${import.meta.env.VITE_WEBSOCKET_URL}/wss/${lobbyCode}`);
 
         ws.onopen = () => {
             console.log('WebSocket connection established');
