@@ -81,7 +81,7 @@ const GameplayPage = ({playerData, sessionId, pageView}) => {
     }, [pageView]);
 
     const startGame = async (lobbyCode) => {
-        const url = `${import.meta.env.VITE_WEBSOCKET_URL}/start/${lobbyCode}`;
+        const url = `https://${import.meta.env.VITE_WEBSOCKET_URL}/start/${lobbyCode}`;
         try {
             const response = await fetch(url, {
                 method: 'POST',
