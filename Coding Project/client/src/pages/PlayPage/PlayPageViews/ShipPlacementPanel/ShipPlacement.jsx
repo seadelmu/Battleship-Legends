@@ -11,9 +11,9 @@ const ShipPlacementPanel = ({sessionId, displayName, lobbyCode, color}) => {
         // real ships for demo
         { id: '1', size: 2, orientation: 'horizontal' },
         { id: '2', size: 3, orientation: 'horizontal' },
-        // { id: '3', size: 3, orientation: 'horizontal' },
-        // { id: '4', size: 4, orientaggittion: 'horizontal' },
-        // { id: '5', size: 5, orientation: 'horizontal' }
+        { id: '3', size: 3, orientation: 'horizontal' },
+        { id: '4', size: 4, orientaggittion: 'horizontal' },
+        { id: '5', size: 5, orientation: 'horizontal' }
 
         // test to make it quicker
         // { id: '1', size: 3, orientation: 'horizontal' },
