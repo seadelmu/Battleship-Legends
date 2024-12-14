@@ -8,6 +8,7 @@ import PropTypes from "prop-types";
 import {useWebSocket} from "../../../../components/WebsocketContextProvider.jsx";
 import GameHint from "./GameHint.jsx";
 import { useNavigate } from 'react-router-dom';
+import {getProtocol} from "../../../../../utils/protocol.js";
 
 const GameplayPage = ({playerData, sessionId, pageView}) => {
     const navigate = useNavigate();
@@ -29,7 +30,7 @@ const GameplayPage = ({playerData, sessionId, pageView}) => {
     const [serverBoard, setServerBoard] = useState(pb);
     const {sockets} = useWebSocket()
     const [selectedPowerUp, setSelectedPowerUp] = useState("Default");
-
+    const protocol = getProtocol();
     const [gameHintVisible, setGameHintVisible] = useState(false);
     const [gameHintMessage, setGameHintMessage] = useState('');
 
@@ -58,9 +59,11 @@ const GameplayPage = ({playerData, sessionId, pageView}) => {
     }, [playerData, sessionId]);
 
     useEffect(() => {
-        setServerBoard(playerData[serverPlayerIndex]?.gameBoard.serverBoard);
-        setServerPlayer(playerData[serverPlayerIndex]);
-        setServerPlayerName(playerData[serverPlayerIndex].displayName);
+        if (playerData[serverPlayerIndex]) {
+            setServerBoard(playerData[serverPlayerIndex].gameBoard.serverBoard);
+            setServerPlayer(playerData[serverPlayerIndex]);
+            setServerPlayerName(playerData[serverPlayerIndex].displayName);
+        }
     }, [playerBoard, playerData, serverPlayerIndex]);
 
     useEffect(() => {
@@ -81,7 +84,7 @@ const GameplayPage = ({playerData, sessionId, pageView}) => {
     }, [pageView]);
 
     const startGame = async (lobbyCode) => {
-        const url = `https://${import.meta.env.VITE_WEBSOCKET_URL}/start/${lobbyCode}`;
+        const url = `${protocol}://${import.meta.env.VITE_WEBSOCKET_URL}/start/${lobbyCode}`;
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -118,7 +121,6 @@ const GameplayPage = ({playerData, sessionId, pageView}) => {
             const data = JSON.parse(message.data);
             if (data.type === 'PLAYER_LEAVE') {
                 const updatedPlayerData = playerData.filter(player => player.id !== data.playerId);
-                setPlayerData(updatedPlayerData);
                 if (serverPlayer.id === data.playerId) {
                     handleRightArrowClick();
                 }

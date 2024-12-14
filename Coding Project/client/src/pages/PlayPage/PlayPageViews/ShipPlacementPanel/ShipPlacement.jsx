@@ -5,6 +5,7 @@ import BattleShipBoard from "../../../../components/BoardComponent/BattleShipBoa
 import PropTypes from "prop-types";
 import {getCookie} from "../../../../../utils/cookies.js";
 import {useWebSocket} from "../../../../components/WebsocketContextProvider.jsx";
+import {getProtocol} from "../../../../../utils/protocol.js";
 
 const ShipPlacementPanel = ({sessionId, displayName, lobbyCode, color}) => {
     const ships = [
@@ -29,7 +30,7 @@ const ShipPlacementPanel = ({sessionId, displayName, lobbyCode, color}) => {
     const [currentOrientation, setCurrentOrientation] = useState('horizontal');
     const [tentativePlacement, setTentativePlacement] = useState(false);
     const [loading, setLoading] = useState(false);
-
+    const protocol = getProtocol();
     const addShip = (x, y, length, direction, shipId) => {
         if (socket) {
 
@@ -107,7 +108,7 @@ const ShipPlacementPanel = ({sessionId, displayName, lobbyCode, color}) => {
 
 
     async function populatePlayerBoard(lobbyCode, sessionId, playerBoard) {
-        const url = `https://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/${lobbyCode}/populatePlayerBoard`;
+        const url = `${protocol}://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/${lobbyCode}/populatePlayerBoard`;
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -124,7 +125,7 @@ const ShipPlacementPanel = ({sessionId, displayName, lobbyCode, color}) => {
         }
     }
     async function updateAreShipsPlaced(lobbyCode, sessionId) {
-        const url = `https://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/${lobbyCode}/updateAreShipsPlaced`;
+        const url = `${protocol}://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/${lobbyCode}/updateAreShipsPlaced`;
         const response = await fetch(url, {
             method: 'POST',
             headers: {

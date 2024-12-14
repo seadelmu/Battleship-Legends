@@ -1,19 +1,21 @@
 import './EnterLobbyPage.css';
 import { useNavigate } from "react-router-dom";
 import { useWebSocket } from "../../components/WebsocketContextProvider.jsx";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Toast from "../../components/Toast/Toast.jsx";
 import FormValidation from "../../components/FormValidationComponent/FormValidation";
+import {getProtocol} from "../../../utils/protocol.js";
 
 function doesLobbyExist(lobbyCode, navigate, connectToLobby) {
     if (!lobbyCode) {
         console.error('Lobby code is not set');
         return false;
     }
+    const protocol = getProtocol();
 
     let exists = false;
     console.log('New LobbyCode: ' + lobbyCode);
-    fetch(`https://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/doesLobbyExist/${lobbyCode}`, {
+    fetch(`${protocol}://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/doesLobbyExist/${lobbyCode}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -70,7 +72,7 @@ const EnterLobbyPage = () => {
     const [toastType, setToastType] = useState("success");
     const [toastMessage, setToastMessage] = useState("");
     const [buttonDisabled, setButtonDisabled] = useState(false);
-
+    const protocol = getProtocol();
     const showToast = (type) => {
         setToastType(type);
         setToastVisible(true);
@@ -110,7 +112,7 @@ const EnterLobbyPage = () => {
 
     async function createLobby(password, maxPlayers, lobbyCode) {
         try {
-            const response = await fetch(`https://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/createLobby?password=${password}&maxPlayers=${maxPlayers}&lobbyCode=${lobbyCode}`, {
+            const response = await fetch(`${protocol}://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/createLobby?password=${password}&maxPlayers=${maxPlayers}&lobbyCode=${lobbyCode}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

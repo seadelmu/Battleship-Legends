@@ -7,7 +7,7 @@ const WebSocket = ({ lobbyCode }) => {
 
     useEffect(() => {
         const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-        const ws = new window.WebSocket(`wss://${import.meta.env.VITE_WEBSOCKET_URL}/wss/${lobbyCode}`);
+        const ws = new window.WebSocket(`${protocol}://${import.meta.env.VITE_WEBSOCKET_URL}/${protocol}/${lobbyCode}`);
 
         ws.onopen = () => {
             console.log('WebSocket connection established');
@@ -24,7 +24,7 @@ const WebSocket = ({ lobbyCode }) => {
         setSocket(ws);
 
         // Fetch the number of connected clients from a specific lobby code
-        fetch(`/wss/${lobbyCode}`)
+        fetch(`/${protocol}/${lobbyCode}`)
             .then(response => response.json())
             .then(data => setConnectedClients(data));
 

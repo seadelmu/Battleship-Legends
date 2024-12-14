@@ -1,10 +1,9 @@
 import './EnterDisplayNamePage.css'
 import {useState} from "react";
 import { useNavigate } from 'react-router-dom';
-import {v4 as uuidv4} from 'uuid';
 import {getCookie} from "../../../utils/cookies.js";
-import PropTypes from "prop-types";
 import FormValidation from "../../components/FormValidationComponent/FormValidation.tsx";
+import {getProtocol} from "../../../utils/protocol.js";
 
 const EnterDisplayName = () => {
 
@@ -45,6 +44,7 @@ const EnterDisplayName = () => {
     const [displayName, setDisplayName] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [validDisplayName, setValidDisplayName] = useState(true);
+    const protocol = getProtocol();
 
 
     function handleSubmit(displayName, navigate) {
@@ -53,7 +53,7 @@ const EnterDisplayName = () => {
         const player = {displayName: displayName, id: sessionId};
 
 
-        fetch(`https://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/${getCookie('lobbyCode')}/addPlayer`, {
+        fetch(`${protocol}://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/${getCookie('lobbyCode')}/addPlayer`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
