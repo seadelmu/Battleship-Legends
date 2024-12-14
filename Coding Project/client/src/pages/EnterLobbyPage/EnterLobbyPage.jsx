@@ -112,6 +112,7 @@ const EnterLobbyPage = () => {
 
     async function createLobby(password, maxPlayers, lobbyCode) {
         try {
+            console.log('protocol: ' + protocol);
             const response = await fetch(`${protocol}://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/createLobby?password=${password}&maxPlayers=${maxPlayers}&lobbyCode=${lobbyCode}`, {
                 method: 'POST',
                 headers: {
