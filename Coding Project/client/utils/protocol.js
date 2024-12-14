@@ -1,3 +1,3 @@
 export function getProtocol() {
-    return import.meta.env.NODE_ENV === 'production' ? 'https' : 'http';
+    return import.meta.env.ENVIRONMENT === 'production' ? 'https' : 'http';
 }
