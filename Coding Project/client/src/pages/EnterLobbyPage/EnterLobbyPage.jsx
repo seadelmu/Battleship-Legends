@@ -122,7 +122,8 @@ const EnterLobbyPage = () => {
             const data = await response.json();
             console.log("LobbyCode from server: " + data.lobbyCode);
             setLobbyCode(data.lobbyCode);
-            await handleCreateLobby(); // Ensure this runs after createLobby
+            connectToLobby(data.lobbyCode); // Connect to the newly created lobby
+            sendAMessageToServer(data.lobbyCode, navigate); // Navigate to the lobby
         } catch (error) {
             console.error('Error:', error);
         }

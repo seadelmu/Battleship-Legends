@@ -16,14 +16,11 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-
-
 @Component
 public class WebSocketHandler extends TextWebSocketHandler {
 
     public static final int POINTS_PER_SHIP_HIT = 2;
     public static final int POINTS_PER_POINT_CELL_HIT = 1;
-
 
     private final Lobbies lobbiesService;
     private final Map<String, TurnSystem> turnSystems = new ConcurrentHashMap<>();
@@ -86,7 +83,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
             if (sessions.isEmpty()) {
                 lobbySessions.remove(lobbyCode);
                 lobbyPlayers.remove(lobbyCode);
-                turnSystems.remove(lobbyCode);
+                if (turnSystems != null) {
+                    turnSystems.remove(lobbyCode);
+                }
                 lobbies.remove(lobbyCode);
                 lobbiesService.removeLobby(lobbyCode);
                 System.out.println("Lobby " + lobbyCode + " is empty and has been removed.");
@@ -150,14 +149,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
                         switch (selectedPowerUp) {
                             case "Bomb":
                                 int[][] directions = {
-                                        {0, 0}, {1, 0}, {-1, 0}, {0, 1}, {0, -1}
+                                        { 0, 0 }, { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 }
                                 };
 
                                 for (int[] direction : directions) {
                                     int newRow = jsonNode.get("row").asInt() + direction[0];
                                     int newCol = jsonNode.get("col").asInt() + direction[1];
                                     if (newRow >= 0 && newRow < player.getGameBoard().getPlayerBoard().length &&
-                                            newCol >= 0 && newCol < player.getGameBoard().getPlayerBoard()[newRow].length &&
+                                            newCol >= 0
+                                            && newCol < player.getGameBoard().getPlayerBoard()[newRow].length &&
                                             player.getGameBoard().getPlayerBoard()[newRow][newCol].contains("P")) {
                                         playerWhoShot.getGameBoard().hitPointCell();
                                     }
@@ -166,7 +166,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
                                     int newRow = jsonNode.get("row").asInt() + direction[0];
                                     int newCol = jsonNode.get("col").asInt() + direction[1];
                                     if (newRow >= 0 && newRow < player.getGameBoard().getPlayerBoard().length &&
-                                            newCol >= 0 && newCol < player.getGameBoard().getPlayerBoard()[newRow].length &&
+                                            newCol >= 0
+                                            && newCol < player.getGameBoard().getPlayerBoard()[newRow].length &&
                                             player.getGameBoard().getPlayerBoard()[newRow][newCol].contains("B")) {
                                         playerWhoShot.getGameBoard().incrementPointsBy(POINTS_PER_SHIP_HIT);
                                     }
@@ -207,7 +208,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                                         .asInt()].contains("P_HIT")
                                 ||
                                 player.getGameBoard().getPlayerBoard()[jsonNode.get("row").asInt()][jsonNode.get("col")
-                                        .asInt()].matches(".*B\\d+H.*")){
+                                        .asInt()].matches(".*B\\d+H.*")) {
                             System.out.println("Cell has already been hit. Turn will not change.");
                         } else {
                             player.getGameBoard().hit(jsonNode.get("row").asInt(), jsonNode.get("col").asInt(),
@@ -407,10 +408,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
             System.out.println("Player " + player.getDisplayName() + " removed from lobby " + lobbyCode);
 
             TurnSystem turnSystem = turnSystems.get(lobbyCode);
-            if (turnSystem != null && turnSystem.getCurrentTurnPlayerId().equals(player.getId())) {
-                turnSystem.nextTurn();
+            if (turnSystem != null) {
+                if (turnSystem.getCurrentTurnPlayerId().equals(player.getId())) {
+                    turnSystem.nextTurn();
+                    System.out.println(
+                            "Since player left, new turn began, now it is " + turnSystem.getCurrentTurnPlayerId());
+                }
             }
-            System.out.println("Since player left, new turn began, now it is " + turnSystem.getCurrentTurnPlayerId());
         }
         broadcastPlayersUpdate(lobbyCode);
     }
