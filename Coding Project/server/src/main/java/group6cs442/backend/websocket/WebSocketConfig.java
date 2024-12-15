@@ -23,7 +23,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         String protocol = isProductionEnvironment() ? "wss" : "ws";
-        System.out.println("protocol: " + protocol);
         String endpoint = protocol + "/{lobbyCode}";
         registry.addHandler(webSocketHandler, endpoint).setAllowedOrigins("*");
     }

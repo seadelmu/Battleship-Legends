@@ -112,7 +112,6 @@ const EnterLobbyPage = () => {
 
     async function createLobby(password, maxPlayers, lobbyCode) {
         try {
-            console.log('protocol: ' + protocol);
             const response = await fetch(`${protocol}://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/createLobby?password=${password}&maxPlayers=${maxPlayers}&lobbyCode=${lobbyCode}`, {
                 method: 'POST',
                 headers: {
@@ -137,11 +136,11 @@ const EnterLobbyPage = () => {
         <div className="container">
             <section className="section">
                 <img src="/bote.png" alt="Description of image" className={'boat-image'} />
-                <h1 className="heading">BattleShip</h1>
+                <h1 className="heading">battleship legends</h1>
                 <Toast visible={toastVisible} message={toastMessage} type={toastType} />
                 <form className="form" onSubmit={handleSubmit}>
                     <FormValidation
-                        placeholder="Enter a numeric lobby code"
+                        placeholder="Enter a lobby code"
                         errorMessage="Enter numbers only"
                         visible={valid_lobbyCode}
                         onChange={(event) => {
@@ -179,13 +178,13 @@ const EnterLobbyPage = () => {
                 >
                     Create Lobby
                 </button>
-                <button
-                    type="button"
-                    id="help-button"
-                    onClick={() => navigate('/help')}
-                >
-                    Help
-                </button>
+                {/*<button*/}
+                {/*    type="button"*/}
+                {/*    id="help-button"*/}
+                {/*    onClick={() => navigate('/help')}*/}
+                {/*>*/}
+                {/*    Help*/}
+                {/*</button>*/}
             </section>
         </div>
     );

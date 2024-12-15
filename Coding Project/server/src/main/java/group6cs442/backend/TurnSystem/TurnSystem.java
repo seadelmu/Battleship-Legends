@@ -58,6 +58,10 @@ public class TurnSystem {
         startTurn(players.get(currentPlayerIndex));
     }
 
+    public String getCurrentTurnPlayerId() {
+        return players.get(currentPlayerIndex).getId();
+    }
+
     public void endTurn() {
         if (timer != null) {
             timer.cancel();
@@ -71,7 +75,7 @@ public class TurnSystem {
         startTurn(players.get(currentPlayerIndex));
     }
 
-    public void playerAction() {
+    public void nextTurn() {
         if (timer != null) {
             timer.cancel();
         }

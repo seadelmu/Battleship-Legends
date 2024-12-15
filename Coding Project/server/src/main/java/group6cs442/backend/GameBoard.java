@@ -1,5 +1,7 @@
 package group6cs442.backend;
 
+import group6cs442.backend.Player.Player;
+
 import java.util.*;
 
 // GameBoard Class
@@ -117,6 +119,10 @@ public class GameBoard {
 
 	public void incrementPoints() {
 		points = points + 1;
+	}
+
+	public void incrementPointsBy(int points) {
+		this.points += points;
 	}
 
 	public void hitPointCell() {

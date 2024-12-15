@@ -33,7 +33,7 @@ const GameplayPage = ({playerData, sessionId, pageView}) => {
     const protocol = getProtocol();
     const [gameHintVisible, setGameHintVisible] = useState(false);
     const [gameHintMessage, setGameHintMessage] = useState('');
-
+    const [gameMessages, setGameMessages] = useState([]);
     const socket = sockets[lobbyCode];
 
 
@@ -102,6 +102,13 @@ const GameplayPage = ({playerData, sessionId, pageView}) => {
             const data = JSON.parse(message.data);
             if (data.type === 'TURN_UPDATE') {
                 setTurn(data.playerId);
+                if (data.playerId === sessionId) {
+                    const newMessage = { id: Date.now(), text: 'Your turn!' };
+                    setGameMessages((prevMessages) => [...prevMessages, newMessage]);
+                    setTimeout(() => {
+                        setGameMessages((prevMessages) => prevMessages.filter((msg) => msg.id !== newMessage.id));
+                    }, 6000);
+                }
             }
         };
 
@@ -120,7 +127,6 @@ const GameplayPage = ({playerData, sessionId, pageView}) => {
         const handlePlayerLeave = (message) => {
             const data = JSON.parse(message.data);
             if (data.type === 'PLAYER_LEAVE') {
-                const updatedPlayerData = playerData.filter(player => player.id !== data.playerId);
                 if (serverPlayer.id === data.playerId) {
                     handleRightArrowClick();
                 }
@@ -273,7 +279,9 @@ const GameplayPage = ({playerData, sessionId, pageView}) => {
 
     return (
         <>
-            <div className={`container ${!gameStart ? 'disabled' : ''}`}>
+            {gameMessages.map((msg) => (
+                <div key={msg.id} className="turn-message">{msg.text}</div>
+            ))}            <div className={`container ${!gameStart ? 'disabled' : ''}`}>
                 <section className={'section'}>
                     <div className={'turn-timer'}>
                         {countdown}
@@ -328,13 +336,20 @@ const GameplayPage = ({playerData, sessionId, pageView}) => {
                                 </div>
                             </div>
                             <div className={'opponent-board'}>
-                                <div className={'toggle-player-boards'}>
-                                    <span className="arrow left-arrow" onClick={handleLeftArrowClick}>⬅</span>
+                                {playerData.filter(player => player.gameBoard.playerLife).length > 2 && (
+                                    <div className={'toggle-player-boards'}>
+                                        <span className="arrow left-arrow" onClick={handleLeftArrowClick}>⬅</span>
+                                        <h3 className="player-name"
+                                            style={{color: serverPlayer.gameBoard.playerLife ? serverPlayer.color : "#ff0000"}}>{serverPlayerName}&apos;s
+                                            Board</h3>
+                                        <span className="arrow right-arrow" onClick={handleRightArrowClick}>➡</span>
+                                    </div>
+                                )}
+                                {playerData.filter(player => player.gameBoard.playerLife).length <= 2 && (
                                     <h3 className="player-name"
                                         style={{color: serverPlayer.gameBoard.playerLife ? serverPlayer.color : "#ff0000"}}>{serverPlayerName}&apos;s
                                         Board</h3>
-                                    <span className="arrow right-arrow" onClick={handleRightArrowClick}>➡</span>
-                                </div>
+                                )}
                                 <div className={`${turn !== sessionId ? 'cant-click' : ''}`}>
                                     <BattleShipBoard board={serverBoard} onClick={handleServerCellClick}/>
                                 </div>

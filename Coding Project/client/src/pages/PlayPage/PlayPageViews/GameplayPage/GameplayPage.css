@@ -278,3 +278,31 @@
     background-color: transparent;
 }
 
+@keyframes flyDownFadeOut {
+    0% {
+        transform: translate(-50%, -100%);
+        opacity: 1;
+    }
+    80% {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, 0);
+        opacity: 0;
+    }
+}
+
+.turn-message {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    animation: flyDownFadeOut 3s ease-in-out forwards;
+    z-index: 1000;
+}
+

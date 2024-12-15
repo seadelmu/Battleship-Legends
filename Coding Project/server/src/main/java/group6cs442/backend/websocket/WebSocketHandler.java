@@ -2,6 +2,7 @@ package group6cs442.backend.websocket;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import group6cs442.backend.Lobby.Lobbies;
 import group6cs442.backend.Lobby.Lobby;
 import group6cs442.backend.Player.Player;
 import group6cs442.backend.TurnSystem.TurnSystem;
@@ -15,12 +16,24 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+
+
 @Component
 public class WebSocketHandler extends TextWebSocketHandler {
+
+    public static final int POINTS_PER_SHIP_HIT = 2;
+    public static final int POINTS_PER_POINT_CELL_HIT = 1;
+
+
+    private final Lobbies lobbiesService;
     private final Map<String, TurnSystem> turnSystems = new ConcurrentHashMap<>();
     private final Map<String, Set<WebSocketSession>> lobbySessions = Collections.synchronizedMap(new HashMap<>());
     private final Map<String, Map<String, Player>> lobbyPlayers = Collections.synchronizedMap(new LinkedHashMap<>());
     private final Map<String, Lobby> lobbies = new ConcurrentHashMap<>();
+
+    public WebSocketHandler(Lobbies lobbiesService) {
+        this.lobbiesService = lobbiesService;
+    }
 
     public void startGame(String lobbyCode) {
         if (!turnSystems.containsKey(lobbyCode)) {
@@ -75,6 +88,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 lobbyPlayers.remove(lobbyCode);
                 turnSystems.remove(lobbyCode);
                 lobbies.remove(lobbyCode);
+                lobbiesService.removeLobby(lobbyCode);
                 System.out.println("Lobby " + lobbyCode + " is empty and has been removed.");
             } else {
                 // Broadcast updated player list to remaining clients
@@ -131,9 +145,28 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     String selectedPowerUp = playerWhoShot.getGameBoard().getSelectedPowerUp();
 
                     if (!"Default".equals(selectedPowerUp)) {
+
                         // Call the respective power-up function based on the selected power-upc
                         switch (selectedPowerUp) {
                             case "Bomb":
+                                int[][] directions = {
+                                        {0, 0}, {1, 0}, {-1, 0}, {0, 1}, {0, -1}
+                                };
+
+                                for (int[] direction : directions) {
+                                    int newRow = jsonNode.get("row").asInt() + direction[0];
+                                    int newCol = jsonNode.get("col").asInt() + direction[1];
+                                    if (player.getGameBoard().getPlayerBoard()[newRow][newCol].contains("P")) {
+                                        playerWhoShot.getGameBoard().hitPointCell();
+                                    }
+                                }
+                                for (int[] direction : directions) {
+                                    int newRow = jsonNode.get("row").asInt() + direction[0];
+                                    int newCol = jsonNode.get("col").asInt() + direction[1];
+                                    if (player.getGameBoard().getPlayerBoard()[newRow][newCol].contains("B")) {
+                                        playerWhoShot.getGameBoard().incrementPointsBy(POINTS_PER_SHIP_HIT);
+                                    }
+                                }
                                 player.getGameBoard().crossShotPowerUp(jsonNode.get("row").asInt(),
                                         jsonNode.get("col").asInt(), jsonNode.get("color").asText());
                                 playerWhoShot.getGameBoard().removePowerup("Bomb");
@@ -143,6 +176,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
                                 player.getGameBoard().nukePowerUp(jsonNode.get("color").asText());
                                 playerWhoShot.getGameBoard().removePowerup("Nuke");
                                 playerWhoShot.getGameBoard().setSelectedPowerUp("Default");
+                                for (int row = 0; row < player.getGameBoard().getPlayerBoard().length; row++) {
+                                    for (int col = 0; col < player.getGameBoard().getPlayerBoard()[row].length; col++) {
+                                        String cell = player.getGameBoard().getPlayerBoard()[row][col];
+                                        if (cell.contains("P")) {
+                                            playerWhoShot.getGameBoard().hitPointCell();
+                                        } else if (cell.contains("B")) {
+                                            playerWhoShot.getGameBoard().incrementPointsBy(POINTS_PER_SHIP_HIT);
+                                        }
+                                    }
+                                }
                                 break;
                             default:
                                 System.out.println("Unknown power-up selected: " + selectedPowerUp);
@@ -160,7 +203,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                                         .asInt()].contains("P_HIT")
                                 ||
                                 player.getGameBoard().getPlayerBoard()[jsonNode.get("row").asInt()][jsonNode.get("col")
-                                        .asInt()].contains("B_H")) {
+                                        .asInt()].matches(".*B\\d+H.*")){
                             System.out.println("Cell has already been hit. Turn will not change.");
                         } else {
                             player.getGameBoard().hit(jsonNode.get("row").asInt(), jsonNode.get("col").asInt(),
@@ -171,7 +214,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                             if (player.getGameBoard().getPlayerBoard()[jsonNode.get("row").asInt()][jsonNode.get("col")
                                     .asInt()].contains("B")) {
                                 System.out.println(player.getDisplayName() + " has just been struck!");
-                                playerWhoShot.getGameBoard().incrementPoints();
+                                playerWhoShot.getGameBoard().incrementPointsBy(POINTS_PER_SHIP_HIT);
                                 broadcastPlayersUpdate(lobbyCode);
                             } else if (player.getGameBoard().getPlayerBoard()[jsonNode.get("row").asInt()][jsonNode
                                     .get("col").asInt()].contains("P")) {
@@ -292,7 +335,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
 
         if (turnSystem != null) {
-            turnSystem.playerAction();
+            turnSystem.nextTurn();
         }
     }
 
@@ -358,6 +401,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
         if (players != null) {
             players.remove(player.getId());
             System.out.println("Player " + player.getDisplayName() + " removed from lobby " + lobbyCode);
+
+            TurnSystem turnSystem = turnSystems.get(lobbyCode);
+            if (turnSystem != null && turnSystem.getCurrentTurnPlayerId().equals(player.getId())) {
+                turnSystem.nextTurn();
+            }
+            System.out.println("Since player left, new turn began, now it is " + turnSystem.getCurrentTurnPlayerId());
         }
         broadcastPlayersUpdate(lobbyCode);
     }

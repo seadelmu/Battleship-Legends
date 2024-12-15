@@ -28,4 +28,5 @@ public class LobbyController {
         lobbyService.addLobby(newLobby);
         return newLobby;
     }
+
 }

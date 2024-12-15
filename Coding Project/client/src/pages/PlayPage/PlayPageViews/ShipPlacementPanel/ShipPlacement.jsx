@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './ShipPlacement.css';
 import PlayerTag from "../../../../components/PlayerTagComponent/PlayerTag.jsx";
 import BattleShipBoard from "../../../../components/BoardComponent/BattleShipBoard.jsx";
@@ -6,21 +6,23 @@ import PropTypes from "prop-types";
 import {getCookie} from "../../../../../utils/cookies.js";
 import {useWebSocket} from "../../../../components/WebsocketContextProvider.jsx";
 import {getProtocol} from "../../../../../utils/protocol.js";
+import {useMemo} from "react";
 
 const ShipPlacementPanel = ({sessionId, displayName, lobbyCode, color}) => {
-    const ships = [
-        // real ships for demo
-        { id: '1', size: 2, orientation: 'horizontal' },
-        { id: '2', size: 3, orientation: 'horizontal' },
-        { id: '3', size: 3, orientation: 'horizontal' },
-        { id: '4', size: 4, orientaggittion: 'horizontal' },
-        { id: '5', size: 5, orientation: 'horizontal' }
+    const protocol = getProtocol();
 
-        // test to make it quicker
-        // { id: '1', size: 3, orientation: 'horizontal' },
-        // { id: '2', size: 3, orientation: 'horizontal' },
-        // { id: '3', size: 3, orientation: 'horizontal' },
-    ];
+    const ships = useMemo(() => (
+        protocol === 'https' ? [
+            { id: '1', size: 2, orientation: 'horizontal' },
+            { id: '2', size: 3, orientation: 'horizontal' },
+            { id: '3', size: 3, orientation: 'horizontal' },
+            { id: '4', size: 4, orientation: 'horizontal' },
+            { id: '5', size: 5, orientation: 'horizontal' }
+        ] : [
+            { id: '1', size: 3, orientation: 'horizontal' },
+        ]
+    ), [protocol]);
+
     const { sockets } = useWebSocket();
     const socket = sockets[lobbyCode];
 
@@ -30,10 +32,19 @@ const ShipPlacementPanel = ({sessionId, displayName, lobbyCode, color}) => {
     const [currentOrientation, setCurrentOrientation] = useState('horizontal');
     const [tentativePlacement, setTentativePlacement] = useState(false);
     const [loading, setLoading] = useState(false);
-    const protocol = getProtocol();
+
+    const handleRotate = useCallback(() => {
+        const currentShip = ships[currentShipIndex];
+        if (currentShip) {
+            const newOrientation = currentShip.orientation === 'horizontal' ? 'vertical' : 'horizontal';
+            setCurrentOrientation(newOrientation);
+            ships[currentShipIndex] = { ...currentShip, orientation: newOrientation };
+            console.log(`Rotated ship to ${newOrientation}`);
+        }
+    }, [currentShipIndex, ships]);
+
     const addShip = (x, y, length, direction, shipId) => {
         if (socket) {
-
             let orientation;
             if (direction === 'horizontal') {
                 orientation = 'east';
@@ -52,7 +63,6 @@ const ShipPlacementPanel = ({sessionId, displayName, lobbyCode, color}) => {
             socket.send(message);
         }
     };
-
 
     const handleCellClick = (row, col) => {
         const currentShip = ships[currentShipIndex];
@@ -106,7 +116,6 @@ const ShipPlacementPanel = ({sessionId, displayName, lobbyCode, color}) => {
         }
     };
 
-
     async function populatePlayerBoard(lobbyCode, sessionId, playerBoard) {
         const url = `${protocol}://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/${lobbyCode}/populatePlayerBoard`;
         const response = await fetch(url, {
@@ -124,6 +133,7 @@ const ShipPlacementPanel = ({sessionId, displayName, lobbyCode, color}) => {
             throw new Error('Failed to populate player board');
         }
     }
+
     async function updateAreShipsPlaced(lobbyCode, sessionId) {
         const url = `${protocol}://${import.meta.env.VITE_WEBSOCKET_URL}/lobby/${lobbyCode}/updateAreShipsPlaced`;
         const response = await fetch(url, {
@@ -142,7 +152,7 @@ const ShipPlacementPanel = ({sessionId, displayName, lobbyCode, color}) => {
         }
     }
 
-    const confirmShipPlacement = () => {
+    const confirmShipPlacement = useCallback(() => {
         if (tentativePlacement) {
             const { row, col, newBoard, orientation } = tentativePlacement;
             const currentShip = ships[currentShipIndex];
@@ -163,10 +173,28 @@ const ShipPlacementPanel = ({sessionId, displayName, lobbyCode, color}) => {
 
             // Check if all ships are placed
             if (currentShipIndex + 1 >= ships.length) {
-                updateAreShipsPlaced(getCookie('lobbyCode'), sessionId);
+                updateAreShipsPlaced(getCookie('lobbyCode'), sessionId).then(r => {
+                    console.log(r, 'areShipsPlaced updated')
+                });
             }
         }
+    }, [tentativePlacement, ships, currentShipIndex, placedShips, sessionId]);
+    const handleGoToGame = () => {
+        // setLoading(true);
+        populatePlayerBoard(getCookie('lobbyCode'), sessionId, board);
+        updateAreShipsPlaced(getCookie('lobbyCode'), sessionId);
+        setTimeout(() => {
+        }, 2000);
     };
+    useEffect(() => {
+        if (currentShipIndex === ships.length) {
+            setLoading(true);
+            handleGoToGame();
+        } else {
+            setLoading(false);
+        }
+    }, [currentShipIndex, ships.length]);
+
 
     useEffect(() => {
         const handleKeyPress = (event) => {
@@ -182,57 +210,40 @@ const ShipPlacementPanel = ({sessionId, displayName, lobbyCode, color}) => {
         return () => {
             window.removeEventListener('keydown', handleKeyPress);
         };
-    }, [currentShipIndex]);
+    }, [handleRotate, confirmShipPlacement]);
 
-    const handleRotate = () => {
-        const currentShip = ships[currentShipIndex];
-        if (currentShip) {
-            const newOrientation = currentShip.orientation === 'horizontal' ? 'vertical' : 'horizontal';
-            setCurrentOrientation(newOrientation);
-            ships[currentShipIndex] = { ...currentShip, orientation: newOrientation };
-            console.log(`Rotated ship to ${newOrientation}`);
-        }
-    };
 
-    //TODO: will get a message from the server to state that other players are ready
-    //TODO: Eventually once all players confirm their ship placements, the server will send a message to navigate to the gameplay page
-    const handleGoToGame = () => {
-        setLoading(true);
-        populatePlayerBoard(getCookie('lobbyCode'),sessionId, board);
-        updateAreShipsPlaced(getCookie('lobbyCode'), sessionId);
-        // console.log(board);
-        setTimeout(() => {
-        }, 2000);
-    };
 
     return (
         <div className={'container'}>
-                <div className={'players-container'}>
-                    <PlayerTag displayName={displayName} color={color}/>
-                </div>
+            <div className={'players-container'}>
+                <PlayerTag displayName={displayName} color={color}/>
+            </div>
             {
                 currentShipIndex < ships.length &&
                 <h3 className={'placing-cell-text'}>You are placing a {ships[currentShipIndex].size} cell ship.</h3>}
-                <div className={'boards-container'}>
-                    <div className={'client-board'}>
-                        <BattleShipBoard board={tentativePlacement ? tentativePlacement.newBoard : board} onClick={handleCellClick} />
-                        {currentShipIndex < ships.length ? (
-                            <div className="ship-controls">
-                                <p>Your current ship orientation is <span style={{fontWeight: "bold"}}>{currentOrientation}</span> press &apos;R&apos; to Change</p>
-                                    <button className={'ship-placement-button'} onClick={confirmShipPlacement} disabled={!tentativePlacement} >Confirm Ship</button>
-                            </div>
-                        ) : (
-                            <div className="ship-controls">
-                                <button className={'ship-placement-button'} onClick={handleGoToGame}
-                                        disabled={loading}>
-                                    Go to Game
-                                    {loading && <span className="loading-circle"></span>}
-                                </button>
-                                {loading && <p className="waiting-text"> Waiting for other players...</p>}
-                            </div>
-                        )}
-                    </div>
+            <div className={'boards-container'}>
+                <div className={'client-board'}>
+                    <BattleShipBoard board={tentativePlacement ? tentativePlacement.newBoard : board} onClick={handleCellClick} />
+                    {currentShipIndex < ships.length ? (
+                        <div className="ship-controls">
+                            <p>Your current ship orientation is <span style={{fontWeight: "bold"}}>{currentOrientation}</span> press &apos;R&apos; to Change</p>
+                            <button className={'ship-placement-button'} onClick={confirmShipPlacement} disabled={!tentativePlacement} >Confirm Ship</button>
+                        </div>
+                    ) : (
+                        <div className="ship-controls">
+                            {/*<button className={'ship-placement-button'} onClick={handleGoToGame}*/}
+                            {/*        disabled={loading}>*/}
+                            {/*    Go to Game*/}
+                            {/*    {loading && <span className="loading-circle"></span>}*/}
+                            {/*</button>*/}
+                            {loading && <p className="waiting-text"> <span className="loading-circle"></span> Waiting for
+                                other players... </p>}
+                            {/*{loading && <p className="waiting-text"> Waiting for other players...</p>}*/}
+                        </div>
+                    )}
                 </div>
+            </div>
         </div>
     );
 };

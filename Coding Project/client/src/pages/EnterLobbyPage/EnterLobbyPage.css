@@ -75,6 +75,12 @@ button{
         cursor: pointer;
     background-color: #4bd84b;
     border: transparent;
+    width: 10rem;
+    transition: ease-in-out 0.1s;
+}
+
+.join-button:hover {
+    background-color: rgba(50, 140, 50, 0.73);
 }
 
 .create-button{
@@ -83,6 +89,11 @@ button{
     cursor: pointer;
     background-color: rgb(74, 98, 181);
     border: transparent;
+    width: 10rem;
+    transition: ease-in-out 0.1s;
+}
+.create-button:hover {
+    background-color: rgba(74, 98, 181, 0.73);
 }
 
 .button-holders{

@@ -31,6 +31,16 @@ public class Lobbies {
         return false;
     }
 
+    public boolean removeLobby(String lobbyCode) {
+        for (Lobby lobby : lobbies) {
+            if (lobby.getLobbyCode().equals(lobbyCode)) {
+                lobbies.remove(lobby);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void addLobby(Lobby lobby) {
         lobbies.add(lobby);
     }
