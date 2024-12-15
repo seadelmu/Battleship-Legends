@@ -156,14 +156,18 @@ public class WebSocketHandler extends TextWebSocketHandler {
                                 for (int[] direction : directions) {
                                     int newRow = jsonNode.get("row").asInt() + direction[0];
                                     int newCol = jsonNode.get("col").asInt() + direction[1];
-                                    if (player.getGameBoard().getPlayerBoard()[newRow][newCol].contains("P")) {
+                                    if (newRow >= 0 && newRow < player.getGameBoard().getPlayerBoard().length &&
+                                            newCol >= 0 && newCol < player.getGameBoard().getPlayerBoard()[newRow].length &&
+                                            player.getGameBoard().getPlayerBoard()[newRow][newCol].contains("P")) {
                                         playerWhoShot.getGameBoard().hitPointCell();
                                     }
                                 }
                                 for (int[] direction : directions) {
                                     int newRow = jsonNode.get("row").asInt() + direction[0];
                                     int newCol = jsonNode.get("col").asInt() + direction[1];
-                                    if (player.getGameBoard().getPlayerBoard()[newRow][newCol].contains("B")) {
+                                    if (newRow >= 0 && newRow < player.getGameBoard().getPlayerBoard().length &&
+                                            newCol >= 0 && newCol < player.getGameBoard().getPlayerBoard()[newRow].length &&
+                                            player.getGameBoard().getPlayerBoard()[newRow][newCol].contains("B")) {
                                         playerWhoShot.getGameBoard().incrementPointsBy(POINTS_PER_SHIP_HIT);
                                     }
                                 }

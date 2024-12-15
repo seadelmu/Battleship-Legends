@@ -131,7 +131,7 @@ public class GameBoard {
 
 	public boolean losePoints(int cost) {
 
-		if (points > cost) {
+		if (points >= cost) {
 			points = points - cost;
 			return true;
 		} else {

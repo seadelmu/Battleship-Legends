@@ -92,7 +92,6 @@ public class TurnSystem {
         if (timer != null) {
             timer.cancel();
         }
-        //TODO: Does this move the turn to the next player?
         players.remove(player);
         if (players.size() <= 1) {
             System.out.println("Only one or no players left in the game.");
