@@ -182,8 +182,6 @@ public class GameBoard2 {
 	//
 	// Method to add ships to the board, given an row,col coordinate,
 	// the size of the ship, orientation of the ship, and a number identifier.
-	// Method also calls the checkBounds method to see if the entire ship fits
-	// in the bounds of the board.
 	public int AddShip(int row, int col, int shipSize, String orientation, int number) {
 		int err = checkBounds(row, col, shipSize, orientation);
 		String shipIdentifier = "B" + number;
@@ -427,6 +425,7 @@ public class GameBoard2 {
 	// 	this.playerLife = playerLife;
 	// }
 
+	
 	// checkBounds
 	//
 	// Method checks if the coordinate position exists on the board, and
@@ -508,6 +507,7 @@ public class GameBoard2 {
 
 		System.out.println();
 	}
+	
 
 	static void debugPrintTile(PlayerTile t) {
 		System.out.println("Debug PlayerTile");
